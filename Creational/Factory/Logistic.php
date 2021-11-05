@@ -36,7 +36,7 @@ abstract class Logistic
  * Concrete Creators override the factory method in order to change the
  * resulting product's type.
  */
-class ConcreteCreator1 extends Logistic
+class RoadLogistic extends Logistic
 {
     /**
      * Note that the signature of the method still uses the abstract product
@@ -46,15 +46,15 @@ class ConcreteCreator1 extends Logistic
      */
     public function createTransport(): Product
     {
-        return new RoadLogistic();
+        return new Truck();
     }
 }
 
-class ConcreteCreator2 extends Logistic
+class SeaLogistic extends Logistic
 {
     public function createTransport(): Product
     {
-        return new SeaLogistic();
+        return new Ship();
     }
 }
 
@@ -70,7 +70,7 @@ interface Product
 /**
  * Concrete Products provide various implementations of the Product interface.
  */
-class RoadLogistic implements Product
+class Truck implements Product
 {
     public function deliver($place): string
     {
@@ -78,7 +78,7 @@ class RoadLogistic implements Product
     }
 }
 
-class SeaLogistic implements Product
+class Ship implements Product
 {
     public function deliver($place): string
     {
@@ -99,8 +99,8 @@ function clientCode(Logistic $logistic)
 }
 
 echo "App: Launched with the ConcreteCreator1.\n";
-clientCode(new ConcreteCreator1());
+clientCode(new RoadLogistic());
 echo "\n\n";
 
 echo "App: Launched with the ConcreteCreator2.\n";
-clientCode(new ConcreteCreator2());
+clientCode(new SeaLogistic());
