@@ -106,9 +106,10 @@ class Director
         $this->builder->SetDoors();
         $this->builder->SetRoof();
         $this->builder->SetWindows();
+        $this->builder->SetRooms();
     }
 
-    public function BuildMediumFeturedHouse()
+    public function BuildFullFeturedHouse()
     {
         $this->builder->SetDoors();
         $this->builder->SetRoof();
@@ -127,8 +128,8 @@ class Director
 function clientCode(Director $director) {
     $house = new HouseBuilder();
     $director->setBuilder($house);
-    $director->BuildMediumFeturedHouse();
-    echo "Standard Medium House:\n";
+    $director->BuildFullFeturedHouse();
+    echo "Standard Full House:\n";
     $house->getHouse()->listParts();
 
     // ‌Builder pattern can be used without a Director class 

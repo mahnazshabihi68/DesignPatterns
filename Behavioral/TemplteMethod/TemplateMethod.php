@@ -17,7 +17,7 @@ abstract class OrderProcess
     {
         $this->thingsToDo[] = $this->doSelect();
         $this->thingsToDo[] = $this->doPayment();
-        if (!is_null($this->isGift())) $this->thingsToDo[] = $this->isGift();
+        if (!is_null($this->isGift())) $this->thingsToDo[] = $this->giftWrap();
         $this->thingsToDo[] = $this->doDelivery();
     }
 
@@ -71,7 +71,7 @@ class BuyGiftOrder extends OrderProcess
 {
     protected function isGift()
     {
-        return "Gift wrap successful";
+        return "Is Gift";
     }
 
     public function doSelect()
