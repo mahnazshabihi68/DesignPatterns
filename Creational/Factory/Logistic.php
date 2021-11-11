@@ -12,7 +12,7 @@ abstract class Logistic
      * Note that the Logistic may also provide some default implementation of the
      * factory method.
      */
-    abstract public function createTransport(): Product;
+    abstract public function createTransport(): Transport;
 
     /**
      * Also note that, despite its name, the Logistic's primary responsibility is
@@ -44,7 +44,7 @@ class RoadLogistic extends Logistic
      * method. This way the Creator can stay independent of concrete product
      * classes.
      */
-    public function createTransport(): Product
+    public function createTransport(): Transport
     {
         return new Truck();
     }
@@ -52,7 +52,7 @@ class RoadLogistic extends Logistic
 
 class SeaLogistic extends Logistic
 {
-    public function createTransport(): Product
+    public function createTransport(): Transport
     {
         return new Ship();
     }
@@ -62,7 +62,7 @@ class SeaLogistic extends Logistic
  * The Product interface declares the operations that all concrete products must
  * implement.
  */
-interface Product
+interface Transport
 {
     public function deliver($place): string;
 }
@@ -70,7 +70,7 @@ interface Product
 /**
  * Concrete Products provide various implementations of the Product interface.
  */
-class Truck implements Product
+class Truck implements Transport
 {
     public function deliver($place): string
     {
@@ -78,7 +78,7 @@ class Truck implements Product
     }
 }
 
-class Ship implements Product
+class Ship implements Transport
 {
     public function deliver($place): string
     {
