@@ -1,168 +1,166 @@
 <?php
 
 /**
- * The Abstract Factory interface declares a set of methods that return
- * different abstract products. These products are called a family and are
- * related by a high-level theme or concept. Products of one family are usually
- * able to collaborate among themselves. A family of products may have several
- * variants, but the products of one variant are incompatible with products of
- * another.
+ * BookFactory classes
  */
-interface AbstractFactory
-{
-    public function createProductA(): AbstractProductA;
-
-    public function createProductB(): AbstractProductB;
+abstract class AbstractBookFactory {
+    abstract function makePHPBook();
+    abstract function makeMySQLBook();
 }
 
-/**
- * Concrete Factories produce a family of products that belong to a single
- * variant. The factory guarantees that resulting products are compatible. Note
- * that signatures of the Concrete Factory's methods return an abstract product,
- * while inside the method a concrete product is instantiated.
- */
-class ConcreteFactory1 implements AbstractFactory
-{
-    public function createProductA(): AbstractProductA
-    {
-        return new ConcreteProductA1();
+class OReillyBookFactory extends AbstractBookFactory {
+    private $context = "OReilly";
+    function makePHPBook() {
+        return new OReillyPHPBook;
     }
+    function makeMySQLBook() {
+        return new OReillyMySQLBook;
+    }
+}
 
-    public function createProductB(): AbstractProductB
-    {
-        return new ConcreteProductB1();
+class SamsBookFactory extends AbstractBookFactory {
+    private $context = "Sams";
+    function makePHPBook() {
+        return new SamsPHPBook;
+    }
+    function makeMySQLBook() {
+        return new SamsMySQLBook;
     }
 }
 
 /**
- * Each Concrete Factory has a corresponding product variant.
+ * Book classes
  */
-class ConcreteFactory2 implements AbstractFactory
-{
-    public function createProductA(): AbstractProductA
-    {
-        return new ConcreteProductA2();
-    }
+abstract class AbstractBook {
+    abstract function getAuthor();
+    abstract function getTitle();
+}
 
-    public function createProductB(): AbstractProductB
+abstract class AbstractMySQLBook extends AbstractBook {
+    protected $subject = "MySQL";
+}
+
+class OReillyMySQLBook extends AbstractMySQLBook {
+    private $author;
+    private $title;
+    function __construct() {
+        $this->author = 'George Reese, Randy Jay Yarger, and Tim King';
+        $this->title = 'Managing and Using MySQL';
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+class SamsMySQLBook extends AbstractMySQLBook {
+    private $author;
+    private $title;
+    function __construct() {
+        $this->author = 'Paul Dubois';
+        $this->title = 'MySQL, 3rd Edition';
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+abstract class AbstractPHPBook extends AbstractBook {
+    protected $subject = "PHP";
+}
+
+class OReillyPHPBook extends AbstractPHPBook {
+    private $author;
+    private $title;
+    private static $oddOrEven = 'odd';
+    function __construct()
     {
-        return new ConcreteProductB2();
+        //alternate between 2 books
+        if ('odd' == self::$oddOrEven) {
+            $this->author = 'Rasmus Lerdorf and Kevin Tatroe';
+            $this->title = 'Programming PHP';
+            self::$oddOrEven = 'even';
+        }
+        else {
+            $this->author = 'David Sklar and Adam Trachtenberg';
+            $this->title = 'PHP Cookbook';
+            self::$oddOrEven = 'odd';
+        }
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
+    }
+}
+
+class SamsPHPBook extends AbstractPHPBook {
+    private $author;
+    private $title;
+    function __construct() {
+        //alternate randomly between 2 books
+        mt_srand((double)microtime() * 10000000);
+        $rand_num = mt_rand(0, 1);
+
+        if (1 > $rand_num) {
+            $this->author = 'George Schlossnagle';
+            $this->title = 'Advanced PHP Programming';
+        }
+        else {
+            $this->author = 'Christian Wenz';
+            $this->title = 'PHP Phrasebook';
+        }
+    }
+    function getAuthor() {
+        return $this->author;
+    }
+    function getTitle() {
+        return $this->title;
     }
 }
 
 /**
- * Each distinct product of a product family should have a base interface. All
- * variants of the product must implement this interface.
+ * Initialization
  */
-interface AbstractProductA
-{
-    public function usefulFunctionA(): string;
-}
 
-/**
- * Concrete Products are created by corresponding Concrete Factories.
- */
-class ConcreteProductA1 implements AbstractProductA
-{
-    public function usefulFunctionA(): string
-    {
-        return "The result of the product A1.";
-    }
-}
+  writeln('BEGIN TESTING ABSTRACT FACTORY PATTERN');
+  writeln('');
 
-class ConcreteProductA2 implements AbstractProductA
-{
-    public function usefulFunctionA(): string
-    {
-        return "The result of the product A2.";
-    }
-}
+  writeln('testing OReillyBookFactory');
+  $bookFactoryInstance = new OReillyBookFactory;
+  testConcreteFactory($bookFactoryInstance);
+  writeln('');
 
-/**
- * Here's the the base interface of another product. All products can interact
- * with each other, but proper interaction is possible only between products of
- * the same concrete variant.
- */
-interface AbstractProductB
-{
-    /**
-     * Product B is able to do its own thing...
-     */
-    public function usefulFunctionB(): string;
+  writeln('testing SamsBookFactory');
+  $bookFactoryInstance = new SamsBookFactory;
+  testConcreteFactory($bookFactoryInstance);
 
-    /**
-     * ...but it also can collaborate with the ProductA.
-     *
-     * The Abstract Factory makes sure that all products it creates are of the
-     * same variant and thus, compatible.
-     */
-    public function anotherUsefulFunctionB(AbstractProductA $collaborator): string;
-}
+  writeln("END TESTING ABSTRACT FACTORY PATTERN");
+  writeln('');
 
-/**
- * Concrete Products are created by corresponding Concrete Factories.
- */
-class ConcreteProductB1 implements AbstractProductB
-{
-    public function usefulFunctionB(): string
-    {
-        return "The result of the product B1.";
-    }
+  function testConcreteFactory($bookFactoryInstance)
+  {
+      $phpBookOne = $bookFactoryInstance->makePHPBook();
+      writeln('first php Author: '.$phpBookOne->getAuthor());
+      writeln('first php Title: '.$phpBookOne->getTitle());
 
-    /**
-     * The variant, Product B1, is only able to work correctly with the variant,
-     * Product A1. Nevertheless, it accepts any instance of AbstractProductA as
-     * an argument.
-     */
-    public function anotherUsefulFunctionB(AbstractProductA $collaborator): string
-    {
-        $result = $collaborator->usefulFunctionA();
+      $phpBookTwo = $bookFactoryInstance->makePHPBook();
+      writeln('second php Author: '.$phpBookTwo->getAuthor());
+      writeln('second php Title: '.$phpBookTwo->getTitle());
 
-        return "The result of the B1 collaborating with the ({$result})";
-    }
-}
+      $mySqlBook = $bookFactoryInstance->makeMySQLBook();
+      writeln('MySQL Author: '.$mySqlBook->getAuthor());
+      writeln('MySQL Title: '.$mySqlBook->getTitle());
+  }
 
-class ConcreteProductB2 implements AbstractProductB
-{
-    public function usefulFunctionB(): string
-    {
-        return "The result of the product B2.";
-    }
+  function writeln($line_in) {
+    echo $line_in."<br/>";
+  }
 
-    /**
-     * The variant, Product B2, is only able to work correctly with the variant,
-     * Product A2. Nevertheless, it accepts any instance of AbstractProductA as
-     * an argument.
-     */
-    public function anotherUsefulFunctionB(AbstractProductA $collaborator): string
-    {
-        $result = $collaborator->usefulFunctionA();
-
-        return "The result of the B2 collaborating with the ({$result})";
-    }
-}
-
-/**
- * The client code works with factories and products only through abstract
- * types: AbstractFactory and AbstractProduct. This lets you pass any factory or
- * product subclass to the client code without breaking it.
- */
-function clientCode(AbstractFactory $factory)
-{
-    $productA = $factory->createProductA();
-    $productB = $factory->createProductB();
-
-    echo $productB->usefulFunctionB() . "\n";
-    echo $productB->anotherUsefulFunctionB($productA) . "\n";
-}
-
-/**
- * The client code can work with any concrete factory class.
- */
-echo "Client: Testing client code with the first factory type:\n";
-clientCode(new ConcreteFactory1());
-
-echo "\n";
-
-// echo "Client: Testing the same client code with the second factory type:\n";
-// clientCode(new ConcreteFactory2());
+?>
