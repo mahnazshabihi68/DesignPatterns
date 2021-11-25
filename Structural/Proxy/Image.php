@@ -55,3 +55,14 @@ $image1 = new RealImage($filename);//loading  image and use system resource
 echo 'image object attached to user object .';
 
 echo $image1->display();
+
+
+
+$image2 = new ProxyImage($filename); 
+
+// Call some other methods to attach image to related user. 
+
+echo 'image object attached to user object .';
+
+
+echo $image2->display();//loading  image and use system resource	
