@@ -82,3 +82,10 @@ class WinWriterFactory implements WriterFactory
     }
 }
 
+
+$unixWriterFactory = new UnixWriterFactory();
+$obj = $unixWriterFactory->createCsvWriter();
+echo $obj->write(['hi mahnaz', 'wellcome']) . '<br>';
+
+$json_obj = $unixWriterFactory->createJsonWriter();
+echo $json_obj->write(['hi mahnaz', 'wellcome'], 1);
